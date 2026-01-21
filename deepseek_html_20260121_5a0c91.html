@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PQCMS V01.0 - Enhanced Pharmaceutical Quality Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== CSS STYLES ===== */
+        :root {
+            --navy: #002b5b; --blue: #159895; --gold: #fbc252; --bg: #f0f2f5;
+            --white: #ffffff; --border: #d1d5db; --ok: #27ae60; --bad: #e74c3c;
+            --warn: #f59e0b; --info: #3498db; --purple: #8e44ad;
+            --arabic-font: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            direction: ltr;
+        }
+        
+        body.rtl {
+            direction: rtl;
+            font-family: var(--arabic-font);
+            text-align: right;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        /* Header */
+        .system-header {
+            background: linear-gradient(135deg, var(--navy) 0%, #004080 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .system-title {
+            font-size: 24px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .compliance-badges {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: #e8f5e9;
+            color: #0f5132;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            display: inline-block;
+        }
+        
+        .badge.gmp { background: #e8f5e9; color: #0f5132; }
+        .badge.gdp { background: #e3f2fd; color: #1565c0; }
+        .badge.bp { background: #f3e5f5; color: #7b1fa2; }
+        .badge.usp { background: #fff3e0; color: #f57c00; }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .nav-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 140px;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        
+        .nav-tab:hover { background: #f8f9fa; color: var(--navy); }
+        .nav-tab.active { color: var(--navy); border-bottom: 3px solid var(--navy); background: #f8f9fa; }
+        
+        /* Content Areas */
+        .content-area { display: none; }
+        .content-area.active { display: block; animation: fadeIn 0.3s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--border);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Calculator Grids */
+        .calculation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .calc-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--border);
+        }
+        
+        .calc-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        
+        /* Data Tables */
+        .data-table-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--navy);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .data-table td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+        
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: var(--navy); color: white; }
+        .btn-primary:hover { background: #001f3f; transform: translateY(-1px); }
+        .btn-success { background: var(--ok); color: white; }
+        .btn-danger { background: var(--bad); color: white; }
+        .btn-warning { background: var(--warn); color: white; }
+        .btn-info { background: var(--info); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: #666; }
+        .btn-outline:hover { background: #f8f9fa; }
+        
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+        
+        .toast {
+            background: white;
+            border-radius: 6px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideIn 0.3s;
+            border-left: 4px solid transparent;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .toast-success { border-left-color: var(--ok); }
+        .toast-danger { border-left-color: var(--bad); }
+        .toast-warning { border-left-color: var(--warn); }
+        .toast-info { border-left-color: var(--info); }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .nav-tab { min-width: 100%; justify-content: flex-start; }
+            .dashboard-grid, .calculation-grid { grid-template-columns: 1fr; }
+            .system-title { font-size: 20px; }
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--navy);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* User Management */
+        .user-role-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .role-admin { background: #e74c3c; color: white; }
+        .role-qa { background: #3498db; color: white; }
+        .role-qc { background: #27ae60; color: white; }
+        .role-production { background: #f39c12; color: white; }
+        
+        /* Material Management */
+        .material-type {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .type-api { background: #e3f2fd; color: #1565c0; }
+        .type-excipient { background: #f3e5f5; color: #7b1fa2; }
+        .type-packaging { background: #fff3e0; color: #f57c00; }
+        .type-rm { background: #e8f5e9; color: #388e3c; }
+        
+        /* COA Generator */
+        .coa-preview {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 800px;
+        }
+        
+        .coa-header {
+            text-align: center;
+            border-bottom: 3px double #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .coa-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .coa-table th {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+        }
+        
+        .coa-table td {
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            font-size: 12px;
+        }
+        
+        .signature-box {
+            display: inline-block;
+            width: 200px;
+            border-top: 1px solid #000;
+            text-align: center;
+            margin: 20px;
+            padding-top: 5px;
+        }
+        
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 500px;
+            max-width: 90%;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            .coa-preview, .coa-preview * { visibility: visible; }
+            .coa-preview { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- System Header -->
+        <div class="system-header">
+            <div>
+                <h1 class="system-title">
+                    <i class="fas fa-shield-alt"></i> PQCMS V01.0 - Enhanced
+                </h1>
+                <div style="font-size: 14px;">Pharmaceutical Quality Management System</div>
+                
+                <div class="compliance-badges">
+                    <span class="badge gmp">GMP</span>
+                    <span class="badge gdp">GDP</span>
+                    <span class="badge bp">BP 2025</span>
+                    <span class="badge usp">USP 43</span>
+                    <span class="badge">Ph.Eur. 11.0</span>
+                    <span class="badge">ICH Q7</span>
+                    <span class="badge">FDA</span>
+                    <span class="badge">ALCOA+</span>
+                </div>
+                
+                <div style="font-size: 11px; opacity: 0.8; margin-top: 5px;">
+                    Developed by: Dr. Daoud Tajeldeinn Ahmed
+                </div>
+            </div>
+            
+            <div style="text-align: right;">
+                <div style="margin-bottom: 10px;">
+                    <button class="btn btn-outline" onclick="switchLanguage('en')" style="padding: 4px 8px;">English</button>
+                    <button class="btn btn-outline" onclick="switchLanguage('ar')" style="padding: 4px 8px;">العربية</button>
+                </div>
+                <div style="font-size: 14px;">
+                    Status: <span style="color: #27ae60;">● Online</span>
+                </div>
+                <div style="font-size: 12px;">
+                    User: <strong id="currentUserName">Quality Manager</strong>
+                    <span class="user-role-badge role-qa" id="currentUserRole">QA Manager</span>
+                </div>
+                <div style="font-size: 11px; margin-top: 5px;">
+                    Last Login: <span id="lastLoginTime">Loading...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="dashboard" onclick="showTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </div>
+            <div class="nav-tab" data-tab="user-management" onclick="showTab('user-management')">
+                <i class="fas fa-users-cog"></i> User Management
+            </div>
+            <div class="nav-tab" data-tab="material-management" onclick="showTab('material-management')">
+                <i class="fas fa-boxes"></i> Material Management
+            </div>
+            <div class="nav-tab" data-tab="ipqc-calculations" onclick="showTab('ipqc-calculations')">
+                <i class="fas fa-calculator"></i> IPQC Calculations
+            </div>
+            <div class="nav-tab" data-tab="analysis-entry" onclick="showTab('analysis-entry')">
+                <i class="fas fa-file-signature"></i> Analysis Entry
+            </div>
+            <div class="nav-tab" data-tab="coa-generator" onclick="showTab('coa-generator')">
+                <i class="fas fa-file-certificate"></i> COA Generator
+            </div>
+            <div class="nav-tab" data-tab="microbiology" onclick="showTab('microbiology')">
+                <i class="fas fa-microscope"></i> Microbiology
+            </div>
+            <div class="nav-tab" data-tab="reports" onclick="showTab('reports')">
+                <i class="fas fa-file-pdf"></i> Reports
+            </div>
+            <div class="nav-tab" data-tab="system-backup" onclick="showTab('system-backup')">
+                <i class="fas fa-database"></i> System Backup
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="dashboard" class="content-area active">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-tachometer-alt"></i> Quality Dashboard
+            </h2>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card" style="border-left-color: var(--ok);" onclick="showTab('reports')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 13px; color: #666;">Quality Compliance</div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--ok);">98.7%</div>
+                            <div style="font-size: 11px; color: #666;">▲ 1.2% from last month</div>
+                        </div>
+                        <i class="fas fa-check-circle" style="font-size: 36px; color: rgba(39, 174, 96, 0.2);"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left-color: var(--warn);" onclick="showTab('ipqc-calculations')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 13px; color: #666;">Active IPQC Tests</div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--warn);" id="activeIPQCCount">14</div>
+                            <div style="font-size: 11px; color: #666;">3 awaiting approval</div>
+                        </div>
+                        <i class="fas fa-vial" style="font-size: 36px; color: rgba(245, 158, 11, 0.2);"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left-color: var(--purple);" onclick="showTab('analysis-entry')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 13px; color: #666;">Completed Tests</div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--purple);" id="completedTestsCount">203</div>
+                            <div style="font-size: 11px; color: #666;">This month: 47</div>
+                        </div>
+                        <i class="fas fa-clipboard-check" style="font-size: 36px; color: rgba(142, 68, 173, 0.2);"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left-color: var(--info);" onclick="showTab('microbiology')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 13px; color: #666;">Microbiology Tests</div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--info);" id="microTestsCount">67</div>
+                            <div style="font-size: 11px; color: #666;">0 alert level</div>
+                        </div>
+                        <i class="fas fa-microscope" style="font-size: 36px; color: rgba(52, 152, 219, 0.2);"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="dashboard-grid" style="margin-top: 20px;">
+                <div class="stat-card" onclick="showTab('coa-generator')" style="text-align: center;">
+                    <i class="fas fa-file-certificate" style="font-size: 36px; color: var(--info); margin-bottom: 10px;"></i>
+                    <h4>Certificate of Analysis</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Generate COA with microbiology results</p>
+                </div>
+                
+                <div class="stat-card" onclick="showTab('ipqc-calculations')" style="text-align: center;">
+                    <i class="fas fa-calculator" style="font-size: 36px; color: var(--warn); margin-bottom: 10px;"></i>
+                    <h4>IPQC Calculations</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Perform in-process quality checks</p>
+                </div>
+                
+                <div class="stat-card" onclick="showTab('analysis-entry')" style="text-align: center;">
+                    <i class="fas fa-file-signature" style="font-size: 36px; color: var(--purple); margin-bottom: 10px;"></i>
+                    <h4>Analysis Entry</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Enter test results and analysis data</p>
+                </div>
+
+                <div class="stat-card" onclick="showTab('material-management')" style="text-align: center;">
+                    <i class="fas fa-boxes" style="font-size: 36px; color: var(--navy); margin-bottom: 10px;"></i>
+                    <h4>Material Management</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Manage raw materials and packaging</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Module -->
+        <div id="user-management" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-users-cog"></i> User Management & Access Control
+            </h2>
+            
+            <div class="data-table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--navy);">User Accounts</h3>
+                    <button class="btn btn-primary" onclick="openUserModal()">
+                        <i class="fas fa-user-plus"></i> Add New User
+                    </button>
+                </div>
+                
+                <table class="data-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Department</th>
+                            <th>Email</th>
+                            <th>Last Login</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Material Management Module -->
+        <div id="material-management" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-boxes"></i> Material Management
+            </h2>
+            
+            <div class="data-table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--navy);">Material Inventory</h3>
+                    <div>
+                        <button class="btn btn-primary" onclick="openMaterialModal()">
+                            <i class="fas fa-plus"></i> Add Material
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="data-table" id="materialsTable">
+                    <thead>
+                        <tr>
+                            <th>Material Code</th>
+                            <th>Material Name</th>
+                            <th>Type</th>
+                            <th>Supplier</th>
+                            <th>Current Stock</th>
+                            <th>Re-order Level</th>
+                            <th>Status</th>
+                            <th>Expiry Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="materialsTableBody">
+                        <!-- Materials loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- IPQC Calculations Module -->
+        <div id="ipqc-calculations" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-calculator"></i> IPQC Calculations (BP/USP/Ph.Eur. Compliance)
+            </h2>
+            
+            <div class="calculation-grid">
+                <!-- Tablet Weight Variation -->
+                <div class="calc-card">
+                    <h3 style="color: var(--navy); margin-bottom: 10px;">
+                        <i class="fas fa-weight"></i> Tablet Weight Variation
+                    </h3>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        USP <905> / BP 2025 Appendix XII C / Ph.Eur. 2.9.5
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Average Weight (mg)</label>
+                        <input type="number" class="calc-input" id="avgTabletWeight" value="500" step="0.1">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Individual Weights (mg, comma separated)</label>
+                        <input type="text" class="calc-input" id="individualWeights" value="498,502,499,501,497,503,500,499,501,498">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Pharmacopoeia</label>
+                        <select class="calc-input" id="weightPharmacopoeia">
+                            <option value="BP">BP 2025</option>
+                            <option value="USP">USP 43</option>
+                            <option value="PhEur">Ph.Eur. 11.0</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="calculateWeightVariation()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    
+                    <div id="weightVariationResult" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-size: 14px;">
+                        Result will appear here
+                    </div>
+                </div>
+                
+                <!-- Content Uniformity -->
+                <div class="calc-card">
+                    <h3 style="color: var(--navy); margin-bottom: 10px;">
+                        <i class="fas fa-vial"></i> Content Uniformity
+                    </h3>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        USP <905> / BP 2025 Appendix XII B / Ph.Eur. 2.9.40
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Assay Results (%, comma separated)</label>
+                        <input type="text" class="calc-input" id="assayResults" value="100.2,99.8,101.0,98.5,100.5,99.2,100.8,101.2,99.5,100.0">
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="calculateContentUniformity()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    
+                    <div id="contentUniformityResult" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-size: 14px;">
+                        Acceptance Value (AV) will appear here
+                    </div>
+                </div>
+                
+                <!-- Disintegration Test -->
+                <div class="calc-card">
+                    <h3 style="color: var(--navy); margin-bottom: 10px;">
+                        <i class="fas fa-hourglass-half"></i> Disintegration Test
+                    </h3>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        USP <701> / BP 2025 Appendix XII A / Ph.Eur. 2.9.1
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Disintegration Times (minutes, comma separated)</label>
+                        <input type="text" class="calc-input" id="disintegrationTimes" value="8.5,9.0,8.0,8.5,9.5,8.0">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Specification Limit (minutes)</label>
+                        <input type="number" class="calc-input" id="disintegrationLimit" value="15" step="0.1">
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="calculateDisintegration()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    
+                    <div id="disintegrationResult" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-size: 14px;">
+                        Disintegration test result will appear here
+                    </div>
+                </div>
+                
+                <!-- Friability Test -->
+                <div class="calc-card">
+                    <h3 style="color: var(--navy); margin-bottom: 10px;">
+                        <i class="fas fa-cube"></i> Friability Test
+                    </h3>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        USP <1216> / BP 2025 Appendix XVII C / Ph.Eur. 2.9.7
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Initial Weight (g)</label>
+                        <input type="number" class="calc-input" id="initialFriabilityWeight" value="6.512" step="0.001">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin: 5px 0; font-size: 14px;">Final Weight (g)</label>
+                        <input type="number" class="calc-input" id="finalFriabilityWeight" value="6.480" step="0.001">
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="calculateFriability()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    
+                    <div id="friabilityResult" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-size: 14px;">
+                        Friability percentage will appear here
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Entry Module -->
+        <div id="analysis-entry" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-file-signature"></i> Analysis Data Entry
+            </h2>
+            
+            <!-- Enhanced Analysis Form -->
+            <div class="data-table-container">
+                <h3 style="color: var(--navy); margin-bottom: 15px;">Enter Analysis Results</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Batch Number *</label>
+                        <input type="text" class="calc-input" id="analysisBatch" value="BN-2025-001" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Material Name *</label>
+                        <input type="text" class="calc-input" id="analysisMaterial" value="Metronidazole Tablets 500mg" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Test Date *</label>
+                        <input type="date" class="calc-input" id="analysisDate" value="2025-01-21" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Analyst Name</label>
+                        <input type="text" class="calc-input" id="analystName" value="John Doe" required>
+                    </div>
+                </div>
+                
+                <!-- Test Sections -->
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--navy); margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Physical Tests</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+                        <div>
+                            <label style="font-size: 12px; display: block; margin-bottom: 5px;">Average Weight (mg)</label>
+                            <input type="number" class="calc-input" id="analysisWeight" value="500.5" step="0.1">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; display: block; margin-bottom: 5px;">Hardness (kp)</label>
+                            <input type="number" class="calc-input" id="analysisHardness" value="7.2" step="0.1">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; display: block; margin-bottom: 5px;">Friability (%)</label>
+                            <input type="number" class="calc-input" id="friabilityResultEntry" value="0.48" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--navy); margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Chemical Tests</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+                        <div>
+                            <label style="font-size: 12px; display: block; margin-bottom: 5px;">Assay (%)</label>
+                            <input type="number" class="calc-input" id="assayResultEntry" value="99.8" step="0.1">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; display: block; margin-bottom: 5px;">Content Uniformity AV</label>
+                            <input type="number" class="calc-input" id="cuResultEntry" value="8.5" step="0.1">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; display: block; margin-bottom: 5px;">Disintegration (min)</label>
+                            <input type="number" class="calc-input" id="disintegrationResultEntry" value="8.5" step="0.1">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="saveAnalysis()">
+                        <i class="fas fa-save"></i> Save Analysis
+                    </button>
+                    <button class="btn btn-info" onclick="clearAnalysisForm()" style="margin-left: 10px;">
+                        <i class="fas fa-redo"></i> Clear Form
+                    </button>
+                    <button class="btn btn-success" onclick="submitAnalysis()" style="margin-left: 10px;">
+                        <i class="fas fa-check-circle"></i> Submit for Review
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COA Generator Module -->
+        <div id="coa-generator" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-file-certificate"></i> Certificate of Analysis Generator
+            </h2>
+            
+            <div class="data-table-container">
+                <h3 style="color: var(--navy); margin-bottom: 15px;">COA Generation Parameters</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Batch Number *</label>
+                        <select class="calc-input" id="coaBatchNumber">
+                            <option value="BN-2025-001">BN-2025-001 - Metronidazole Tablets</option>
+                            <option value="BN-2025-002">BN-2025-002 - Aspirin Tablets</option>
+                            <option value="BN-2025-003">BN-2025-003 - Paracetamol Tablets</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Product Name *</label>
+                        <input type="text" class="calc-input" id="coaProductName" value="Metronidazole Tablets 500mg" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Manufacture Date</label>
+                        <input type="date" class="calc-input" id="coaMfgDate" value="2025-01-10">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Expiry Date</label>
+                        <input type="date" class="calc-input" id="coaExpDate" value="2027-01-10">
+                    </div>
+                </div>
+                
+                <!-- COA Preview -->
+                <div class="coa-preview" id="coaPreview">
+                    <div class="coa-header">
+                        <h2 style="color: #002b5b; margin-bottom: 5px;">CERTIFICATE OF ANALYSIS</h2>
+                        <div style="font-size: 14px; color: #666;">Pharmaceutical Quality Control Laboratory</div>
+                        <div style="font-size: 12px; color: #666;">GMP Certified | ISO 17025 Accredited</div>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 50%;">
+                                    <strong>Product Name:</strong> <span id="previewProductName">Metronidazole Tablets 500mg</span><br>
+                                    <strong>Batch Number:</strong> <span id="previewBatchNumber">BN-2025-001</span><br>
+                                    <strong>Manufacture Date:</strong> <span id="previewMfgDate">2025-01-10</span><br>
+                                    <strong>Expiry Date:</strong> <span id="previewExpDate">2027-01-10</span>
+                                </td>
+                                <td style="width: 50%;">
+                                    <strong>Manufactured By:</strong> <span id="previewManufacturer">Pharma Solutions Ltd.</span><br>
+                                    <strong>Testing Laboratory:</strong> <span id="previewLab">Quality Control Laboratory</span><br>
+                                    <strong>COA Number:</strong> COA-2025-001-001<br>
+                                    <strong>COA Date:</strong> <span id="previewCOADate">2025-01-21</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <h3 style="color: #002b5b; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px;">Test Results</h3>
+                    
+                    <table class="coa-table">
+                        <thead>
+                            <tr>
+                                <th>Test Parameter</th>
+                                <th>Specification</th>
+                                <th>Result</th>
+                                <th>Method</th>
+                                <th>Compliance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Average Weight</td>
+                                <td>485-515 mg</td>
+                                <td>500.5 mg</td>
+                                <td>BP App. XII C</td>
+                                <td>✓ Complies</td>
+                            </tr>
+                            <tr>
+                                <td>Hardness</td>
+                                <td>4-10 kp</td>
+                                <td>7.2 kp</td>
+                                <td>USP <1217></td>
+                                <td>✓ Complies</td>
+                            </tr>
+                            <tr>
+                                <td>Friability</td>
+                                <td>≤ 1.0%</td>
+                                <td>0.48%</td>
+                                <td>USP <1216></td>
+                                <td>✓ Complies</td>
+                            </tr>
+                            <tr>
+                                <td>Disintegration</td>
+                                <td>≤ 15 minutes</td>
+                                <td>8.5 minutes</td>
+                                <td>BP App. XII A</td>
+                                <td>✓ Complies</td>
+                            </tr>
+                            <tr>
+                                <td>Assay</td>
+                                <td>95.0-105.0%</td>
+                                <td>99.8%</td>
+                                <td>HPLC</td>
+                                <td>✓ Complies</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 20px;">
+                        <p><strong>Conclusion:</strong> The above batch of <span id="previewConclusionProduct">Metronidazole Tablets 500mg</span>, Batch No. <span id="previewConclusionBatch">BN-2025-001</span> complies with the specifications of BP 2025, USP 43, and Ph.Eur. 11.0 and is released for distribution.</p>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                        <div class="signature-box">
+                            <strong>Analyst</strong><br>
+                            John Doe<br>
+                            QC Analyst
+                        </div>
+                        <div class="signature-box">
+                            <strong>Approved By</strong><br>
+                            <span id="previewApprovedBy">Dr. Daoud Tajeldeinn</span><br>
+                            QA Manager
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- COA Actions -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="updateCOAPreview()">
+                        <i class="fas fa-sync-alt"></i> Update Preview
+                    </button>
+                    <button class="btn btn-success" onclick="printCOA()" style="margin-left: 10px;">
+                        <i class="fas fa-print"></i> Print COA
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Microbiology Module -->
+        <div id="microbiology" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-microscope"></i> Microbiology Testing & Analysis
+            </h2>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card" style="text-align: center;">
+                    <i class="fas fa-vial" style="font-size: 36px; color: var(--info); margin-bottom: 10px;"></i>
+                    <h4>Total Microbial Tests</h4>
+                    <div style="font-size: 32px; font-weight: 800; color: var(--info);">67</div>
+                    <div style="font-size: 12px; color: #666;">This month: 12</div>
+                </div>
+                
+                <div class="stat-card" style="text-align: center;">
+                    <i class="fas fa-check-circle" style="font-size: 36px; color: var(--ok); margin-bottom: 10px;"></i>
+                    <h4>Compliant Tests</h4>
+                    <div style="font-size: 32px; font-weight: 800; color: var(--ok);">64</div>
+                    <div style="font-size: 12px; color: #666;">95.5% compliance</div>
+                </div>
+                
+                <div class="stat-card" style="text-align: center;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 36px; color: var(--warn); margin-bottom: 10px;"></i>
+                    <h4>Alert Level</h4>
+                    <div style="font-size: 32px; font-weight: 800; color: var(--warn);">3</div>
+                    <div style="font-size: 12px; color: #666;">Require investigation</div>
+                </div>
+            </div>
+            
+            <!-- Microbiology Test Entry -->
+            <div class="data-table-container">
+                <h3 style="color: var(--navy); margin-bottom: 15px;">Microbiology Test Entry</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Sample ID</label>
+                        <input type="text" class="calc-input" id="microSampleID" value="WTR-2025-001">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Test Date</label>
+                        <input type="date" class="calc-input" id="microTestDate" value="2025-01-21">
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label style="font-size: 12px; display: block; margin-bottom: 5px;">TAMC (cfu/g or cfu/mL)</label>
+                        <input type="number" class="calc-input" id="tamcValue" value="120" step="1">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; display: block; margin-bottom: 5px;">TYMC (cfu/g or cfu/mL)</label>
+                        <input type="number" class="calc-input" id="tymcValue" value="25" step="1">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; display: block; margin-bottom: 5px;">E. coli</label>
+                        <select class="calc-input" id="ecoliValue">
+                            <option value="absent">Absent</option>
+                            <option value="present">Present</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" onclick="saveMicrobiologyTest()">
+                        <i class="fas fa-save"></i> Save Test Results
+                    </button>
+                    <button class="btn btn-success" onclick="calculateMicroCompliance()" style="margin-left: 10px;">
+                        <i class="fas fa-calculator"></i> Calculate Compliance
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Module -->
+        <div id="reports" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-file-pdf"></i> Reports & Analytics
+            </h2>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card" onclick="generateReport('compliance')" style="text-align: center;">
+                    <i class="fas fa-chart-pie" style="font-size: 36px; color: var(--ok); margin-bottom: 10px;"></i>
+                    <h4>Compliance Report</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">GMP/GDP compliance status</p>
+                </div>
+                
+                <div class="stat-card" onclick="generateReport('trends')" style="text-align: center;">
+                    <i class="fas fa-chart-line" style="font-size: 36px; color: var(--info); margin-bottom: 10px;"></i>
+                    <h4>Trend Analysis</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Statistical quality trends</p>
+                </div>
+                
+                <div class="stat-card" onclick="generateReport('microbiology')" style="text-align: center;">
+                    <i class="fas fa-microscope" style="font-size: 36px; color: var(--purple); margin-bottom: 10px;"></i>
+                    <h4>Microbiology Report</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Microbial test summaries</p>
+                </div>
+            </div>
+            
+            <!-- Report Generator -->
+            <div class="data-table-container" style="margin-top: 20px;">
+                <h3 style="color: var(--navy); margin-bottom: 15px;">Report Generator</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Report Type</label>
+                        <select class="calc-input" id="reportType">
+                            <option value="compliance">Compliance Report</option>
+                            <option value="trend">Trend Analysis</option>
+                            <option value="microbiology">Microbiology Report</option>
+                            <option value="summary">Monthly Summary</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Start Date</label>
+                        <input type="date" class="calc-input" id="reportStartDate" value="2025-01-01">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">End Date</label>
+                        <input type="date" class="calc-input" id="reportEndDate" value="2025-01-21">
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" onclick="generateCustomReport()">
+                        <i class="fas fa-file-export"></i> Generate Report
+                    </button>
+                    <button class="btn btn-info" onclick="previewReport()" style="margin-left: 10px;">
+                        <i class="fas fa-eye"></i> Preview Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Backup Module -->
+        <div id="system-backup" class="content-area">
+            <h2 style="color: var(--navy); margin-bottom: 15px;">
+                <i class="fas fa-database"></i> System Backup & Recovery
+            </h2>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card" style="text-align: center;">
+                    <i class="fas fa-database" style="font-size: 36px; color: var(--info); margin-bottom: 10px;"></i>
+                    <h4>Database Backup</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Backup all system data</p>
+                    <button class="btn btn-primary" style="margin-top: 10px;" onclick="backupDatabase()">
+                        <i class="fas fa-save"></i> Backup Now
+                    </button>
+                </div>
+                
+                <div class="stat-card" style="text-align: center;">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 36px; color: var(--purple); margin-bottom: 10px;"></i>
+                    <h4>Data Export</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Export all data to JSON</p>
+                    <button class="btn btn-info" style="margin-top: 10px;" onclick="exportAllData()">
+                        <i class="fas fa-file-export"></i> Export Data
+                    </button>
+                </div>
+                
+                <div class="stat-card" style="text-align: center;">
+                    <i class="fas fa-history" style="font-size: 36px; color: var(--warn); margin-bottom: 10px;"></i>
+                    <h4>System Restore</h4>
+                    <p style="color: #666; margin: 10px 0; font-size: 14px;">Restore from backup</p>
+                    <button class="btn btn-warning" style="margin-top: 10px;" onclick="restoreBackup()">
+                        <i class="fas fa-history"></i> Restore
+                    </button>
+                </div>
+            </div>
+            
+            <!-- System Health -->
+            <div class="data-table-container" style="margin-top: 20px;">
+                <h3 style="color: var(--navy); margin-bottom: 15px;">System Health</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 12px; color: #666;">Total Users</div>
+                        <div style="font-size: 24px; font-weight: 800; color: var(--navy);" id="totalUsersCount">5</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 12px; color: #666;">Total Materials</div>
+                        <div style="font-size: 24px; font-weight: 800; color: var(--navy);" id="totalMaterialsCount">127</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 12px; color: #666;">Total Analyses</div>
+                        <div style="font-size: 24px; font-weight: 800; color: var(--navy);" id="totalAnalysesCount">203</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 12px; color: #666;">System Status</div>
+                        <div style="font-size: 24px; font-weight: 800; color: var(--ok);">Healthy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--navy); margin-bottom: 20px;" id="userModalTitle">Add New User</h3>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Username</label>
+                <input type="text" class="calc-input" id="modalUsername" placeholder="Enter username">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Full Name</label>
+                <input type="text" class="calc-input" id="modalFullName" placeholder="Enter full name">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email</label>
+                <input type="email" class="calc-input" id="modalEmail" placeholder="Enter email">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Role</label>
+                <select class="calc-input" id="modalRole">
+                    <option value="admin">Administrator</option>
+                    <option value="qa_manager">QA Manager</option>
+                    <option value="qc_analyst">QC Analyst</option>
+                    <option value="production">Production User</option>
+                    <option value="viewer">Viewer</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-outline" onclick="closeUserModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Material Modal -->
+    <div id="materialModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--navy); margin-bottom: 20px;" id="materialModalTitle">Add New Material</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Material Code</label>
+                    <input type="text" class="calc-input" id="modalMaterialCode" placeholder="e.g., API-MET-001">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Material Name</label>
+                    <input type="text" class="calc-input" id="modalMaterialName" placeholder="Enter material name">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Material Type</label>
+                <select class="calc-input" id="modalMaterialType">
+                    <option value="api">Active Pharmaceutical Ingredient (API)</option>
+                    <option value="excipient">Excipient</option>
+                    <option value="packaging">Packaging Material</option>
+                    <option value="raw">Raw Material</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Supplier</label>
+                <input type="text" class="calc-input" id="modalSupplier" placeholder="Enter supplier name">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Current Stock</label>
+                    <input type="number" class="calc-input" id="modalCurrentStock" value="0" step="0.1">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Re-order Level</label>
+                    <input type="number" class="calc-input" id="modalReorderLevel" value="10" step="0.1">
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-outline" onclick="closeMaterialModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveMaterial()">Save Material</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- JavaScript -->
+    <script>
+        // ===== SYSTEM CONFIGURATION =====
+        let currentTab = 'dashboard';
+        let editingUserId = null;
+        let editingMaterialId = null;
+        
+        // Sample Data
+        let users = [
+            {id: 1, username: 'admin', fullName: 'System Administrator', role: 'admin', department: 'IT', email: 'admin@pqcms.com', lastLogin: '2025-01-21 14:30', status: 'active'},
+            {id: 2, username: 'qa_manager', fullName: 'Dr. Daoud Tajeldeinn', role: 'qa_manager', department: 'QA', email: 'daoud@pqcms.com', lastLogin: '2025-01-21 14:28', status: 'active'},
+            {id: 3, username: 'qc_analyst1', fullName: 'John Doe', role: 'qc_analyst', department: 'QC', email: 'john@pqcms.com', lastLogin: '2025-01-21 14:25', status: 'active'}
+        ];
+        
+        let materials = [
+            {id: 1, code: 'API-MET-001', name: 'Metronidazole BP', type: 'api', supplier: 'PharmaChem Inc.', stock: 125.5, reorder: 25, expiry: '2026-05-15', status: 'in_stock'},
+            {id: 2, code: 'EXC-MCC-101', name: 'Microcrystalline Cellulose', type: 'excipient', supplier: 'JRS Pharma', stock: 342.0, reorder: 50, expiry: '2026-08-20', status: 'in_stock'},
+            {id: 3, code: 'PKG-ALU-201', name: 'Aluminum Foil', type: 'packaging', supplier: 'Amcor Ltd.', stock: 85, reorder: 20, expiry: '2027-01-30', status: 'low_stock'}
+        ];
+        
+        let analyses = [];
+        
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSystem();
+        });
+        
+        function initializeSystem() {
+            updateLoginTime();
+            loadUsersTable();
+            loadMaterialsTable();
+            updateDashboardStats();
+            setInterval(updateLoginTime, 60000); // Update every minute
+            showToast('PQCMS Enhanced System loaded successfully', 'success');
+        }
+        
+        // ===== UTILITY FUNCTIONS =====
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${getToastIcon(type)}" style="color: ${getToastColor(type)};"></i>
+                <div>${message}</div>
+                <button onclick="this.parentElement.remove()" style="margin-left: auto; background: none; border: none; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+        
+        function getToastIcon(type) {
+            switch(type) {
+                case 'success': return 'check-circle';
+                case 'warning': return 'exclamation-triangle';
+                case 'danger': return 'times-circle';
+                default: return 'info-circle';
+            }
+        }
+        
+        function getToastColor(type) {
+            switch(type) {
+                case 'success': return 'var(--ok)';
+                case 'warning': return 'var(--warn)';
+                case 'danger': return 'var(--bad)';
+                default: return 'var(--info)';
+            }
+        }
+        
+        function updateLoginTime() {
+            const now = new Date();
+            const formattedTime = now.toISOString().slice(0, 19).replace('T', ' ');
+            document.getElementById('lastLoginTime').textContent = formattedTime;
+        }
+        
+        function switchLanguage(lang) {
+            if (lang === 'ar') {
+                document.body.classList.add('rtl');
+                showToast('تم تغيير اللغة إلى العربية', 'info');
+            } else {
+                document.body.classList.remove('rtl');
+                showToast('Language changed to English', 'info');
+            }
+        }
+        
+        // ===== TAB NAVIGATION =====
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.content-area').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(navTab => {
+                navTab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate corresponding nav tab
+            document.querySelector(`.nav-tab[data-tab="${tabId}"]`).classList.add('active');
+            
+            currentTab = tabId;
+            
+            // Update tab-specific data
+            switch(tabId) {
+                case 'dashboard':
+                    updateDashboardStats();
+                    break;
+                case 'user-management':
+                    loadUsersTable();
+                    break;
+                case 'material-management':
+                    loadMaterialsTable();
+                    break;
+                case 'coa-generator':
+                    updateCOAPreview();
+                    break;
+            }
+        }
+        
+        // ===== DASHBOARD FUNCTIONS =====
+        function updateDashboardStats() {
+            // Update counts
+            document.getElementById('activeIPQCCount').textContent = Math.floor(Math.random() * 5) + 12;
+            document.getElementById('completedTestsCount').textContent = Math.floor(Math.random() * 20) + 200;
+            document.getElementById('microTestsCount').textContent = Math.floor(Math.random() * 10) + 65;
+            document.getElementById('totalUsersCount').textContent = users.length;
+            document.getElementById('totalMaterialsCount').textContent = materials.length;
+            document.getElementById('totalAnalysesCount').textContent = analyses.length;
+        }
+        
+        // ===== USER MANAGEMENT FUNCTIONS =====
+        function loadUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                let roleBadge = '';
+                switch(user.role) {
+                    case 'admin': roleBadge = '<span class="user-role-badge role-admin">Admin</span>'; break;
+                    case 'qa_manager': roleBadge = '<span class="user-role-badge role-qa">QA Manager</span>'; break;
+                    case 'qc_analyst': roleBadge = '<span class="user-role-badge role-qc">QC Analyst</span>'; break;
+                    case 'production': roleBadge = '<span class="user-role-badge role-production">Production</span>'; break;
+                    default: roleBadge = '<span class="user-role-badge">Viewer</span>';
+                }
+                
+                let statusBadge = user.status === 'active' ? 
+                    '<span style="color: var(--ok);">● Active</span>' : 
+                    '<span style="color: var(--bad);">● Inactive</span>';
+                
+                const row = `
+                    <tr>
+                        <td>${user.username}</td>
+                        <td>${user.fullName}</td>
+                        <td>${roleBadge}</td>
+                        <td>${user.department}</td>
+                        <td>${user.email}</td>
+                        <td>${user.lastLogin}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="editUser(${user.id})">Edit</button>
+                            <button class="btn btn-sm btn-outline" onclick="deleteUser(${user.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        function openUserModal(userId = null) {
+            editingUserId = userId;
+            const modal = document.getElementById('userModal');
+            const title = document.getElementById('userModalTitle');
+            
+            if (userId) {
+                // Edit mode
+                title.textContent = 'Edit User';
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    document.getElementById('modalUsername').value = user.username;
+                    document.getElementById('modalFullName').value = user.fullName;
+                    document.getElementById('modalEmail').value = user.email;
+                    document.getElementById('modalRole').value = user.role;
+                }
+            } else {
+                // Add mode
+                title.textContent = 'Add New User';
+                document.getElementById('modalUsername').value = '';
+                document.getElementById('modalFullName').value = '';
+                document.getElementById('modalEmail').value = '';
+                document.getElementById('modalRole').value = 'qc_analyst';
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+            editingUserId = null;
+        }
+        
+        function saveUser() {
+            const username = document.getElementById('modalUsername').value;
+            const fullName = document.getElementById('modalFullName').value;
+            const email = document.getElementById('modalEmail').value;
+            const role = document.getElementById('modalRole').value;
+            
+            if (!username || !fullName || !email) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+            
+            if (editingUserId) {
+                // Update existing user
+                const userIndex = users.findIndex(u => u.id === editingUserId);
+                if (userIndex !== -1) {
+                    users[userIndex] = {
+                        ...users[userIndex],
+                        username,
+                        fullName,
+                        email,
+                        role,
+                        department: role === 'admin' ? 'IT' : role === 'qa_manager' ? 'QA' : role === 'qc_analyst' ? 'QC' : 'Production'
+                    };
+                }
+                showToast('User updated successfully', 'success');
+            } else {
+                // Add new user
+                const newUser = {
+                    id: users.length + 1,
+                    username,
+                    fullName,
+                    role,
+                    department: role === 'admin' ? 'IT' : role === 'qa_manager' ? 'QA' : role === 'qc_analyst' ? 'QC' : 'Production',
+                    email,
+                    lastLogin: new Date().toLocaleString(),
+                    status: 'active'
+                };
+                users.push(newUser);
+                showToast('User added successfully', 'success');
+            }
+            
+            closeUserModal();
+            loadUsersTable();
+            updateDashboardStats();
+        }
+        
+        function editUser(userId) {
+            openUserModal(userId);
+        }
+        
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                users = users.filter(user => user.id !== userId);
+                loadUsersTable();
+                updateDashboardStats();
+                showToast('User deleted successfully', 'success');
+            }
+        }
+        
+        // ===== MATERIAL MANAGEMENT FUNCTIONS =====
+        function loadMaterialsTable() {
+            const tbody = document.getElementById('materialsTableBody');
+            tbody.innerHTML = '';
+            
+            materials.forEach(material => {
+                let typeBadge = '';
+                switch(material.type) {
+                    case 'api': typeBadge = '<span class="material-type type-api">API</span>'; break;
+                    case 'excipient': typeBadge = '<span class="material-type type-excipient">Excipient</span>'; break;
+                    case 'packaging': typeBadge = '<span class="material-type type-packaging">Packaging</span>'; break;
+                    default: typeBadge = '<span class="material-type type-rm">Raw Material</span>';
+                }
+                
+                let statusBadge = '';
+                if (material.status === 'in_stock') {
+                    statusBadge = '<span style="color: var(--ok);">● In Stock</span>';
+                } else if (material.status === 'low_stock') {
+                    statusBadge = '<span style="color: var(--warn);">● Low Stock</span>';
+                } else {
+                    statusBadge = '<span style="color: var(--bad);">● Out of Stock</span>';
+                }
+                
+                const row = `
+                    <tr>
+                        <td>${material.code}</td>
+                        <td>${material.name}</td>
+                        <td>${typeBadge}</td>
+                        <td>${material.supplier}</td>
+                        <td>${material.stock}</td>
+                        <td>${material.reorder}</td>
+                        <td>${statusBadge}</td>
+                        <td>${material.expiry || '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="editMaterial(${material.id})">Edit</button>
+                            <button class="btn btn-sm btn-outline" onclick="deleteMaterial(${material.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        function openMaterialModal(materialId = null) {
+            editingMaterialId = materialId;
+            const modal = document.getElementById('materialModal');
+            const title = document.getElementById('materialModalTitle');
+            
+            if (materialId) {
+                // Edit mode
+                title.textContent = 'Edit Material';
+                const material = materials.find(m => m.id === materialId);
+                if (material) {
+                    document.getElementById('modalMaterialCode').value = material.code;
+                    document.getElementById('modalMaterialName').value = material.name;
+                    document.getElementById('modalMaterialType').value = material.type;
+                    document.getElementById('modalSupplier').value = material.supplier;
+                    document.getElementById('modalCurrentStock').value = material.stock;
+                    document.getElementById('modalReorderLevel').value = material.reorder;
+                }
+            } else {
+                // Add mode
+                title.textContent = 'Add New Material';
+                document.getElementById('modalMaterialCode').value = '';
+                document.getElementById('modalMaterialName').value = '';
+                document.getElementById('modalMaterialType').value = 'api';
+                document.getElementById('modalSupplier').value = '';
+                document.getElementById('modalCurrentStock').value = 0;
+                document.getElementById('modalReorderLevel').value = 10;
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeMaterialModal() {
+            document.getElementById('materialModal').style.display = 'none';
+            editingMaterialId = null;
+        }
+        
+        function saveMaterial() {
+            const code = document.getElementById('modalMaterialCode').value;
+            const name = document.getElementById('modalMaterialName').value;
+            const type = document.getElementById('modalMaterialType').value;
+            const supplier = document.getElementById('modalSupplier').value;
+            const stock = parseFloat(document.getElementById('modalCurrentStock').value);
+            const reorder = parseFloat(document.getElementById('modalReorderLevel').value);
+            
+            if (!code || !name || !supplier) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+            
+            // Determine status based on stock
+            let status = 'in_stock';
+            if (stock === 0) {
+                status = 'out_of_stock';
+            } else if (stock <= reorder) {
+                status = 'low_stock';
+            }
+            
+            if (editingMaterialId) {
+                // Update existing material
+                const materialIndex = materials.findIndex(m => m.id === editingMaterialId);
+                if (materialIndex !== -1) {
+                    materials[materialIndex] = {
+                        ...materials[materialIndex],
+                        code,
+                        name,
+                        type,
+                        supplier,
+                        stock,
+                        reorder,
+                        status
+                    };
+                }
+                showToast('Material updated successfully', 'success');
+            } else {
+                // Add new material
+                const newMaterial = {
+                    id: materials.length + 1,
+                    code,
+                    name,
+                    type,
+                    supplier,
+                    stock,
+                    reorder,
+                    expiry: '2026-12-31',
+                    status
+                };
+                
+                materials.push(newMaterial);
+                showToast('Material added successfully', 'success');
+            }
+            
+            closeMaterialModal();
+            loadMaterialsTable();
+            updateDashboardStats();
+        }
+        
+        function editMaterial(materialId) {
+            openMaterialModal(materialId);
+        }
+        
+        function deleteMaterial(materialId) {
+            if (confirm('Are you sure you want to delete this material?')) {
+                materials = materials.filter(material => material.id !== materialId);
+                loadMaterialsTable();
+                updateDashboardStats();
+                showToast('Material deleted successfully', 'success');
+            }
+        }
+        
+        // ===== IPQC CALCULATION FUNCTIONS =====
+        function calculateWeightVariation() {
+            const avgWeight = parseFloat(document.getElementById('avgTabletWeight').value);
+            const weightsText = document.getElementById('individualWeights').value;
+            const pharmacopoeia = document.getElementById('weightPharmacopoeia').value;
+            
+            if (!weightsText || isNaN(avgWeight)) {
+                showToast('Please enter valid weight values', 'warning');
+                return;
+            }
+            
+            const weights = weightsText.split(',').map(w => parseFloat(w.trim()));
+            const n = weights.length;
+            
+            // Calculate statistics
+            const mean = weights.reduce((a, b) => a + b, 0) / n;
+            const deviations = weights.map(w => Math.abs(w - avgWeight));
+            const maxDeviation = Math.max(...deviations);
+            const percentDeviation = (maxDeviation / avgWeight) * 100;
+            
+            // Check compliance
+            let compliant = false;
+            let criteria = '';
+            
+            if (pharmacopoeia === 'BP') {
+                if (avgWeight >= 250) {
+                    compliant = percentDeviation <= 5;
+                    criteria = 'BP Limit: ±5% for tablets ≥ 250mg';
+                } else {
+                    compliant = percentDeviation <= 10;
+                    criteria = 'BP Limit: ±10% for tablets < 250mg';
+                }
+            } else if (pharmacopoeia === 'USP') {
+                compliant = percentDeviation <= 5;
+                criteria = 'USP Limit: ±5%';
+            } else {
+                compliant = percentDeviation <= 5;
+                criteria = 'Ph.Eur. Limit: ±5%';
+            }
+            
+            const result = `
+                <strong>Weight Variation Results (${pharmacopoeia})</strong><br>
+                Average Weight: ${mean.toFixed(2)} mg<br>
+                Target Weight: ${avgWeight.toFixed(2)} mg<br>
+                Maximum Deviation: ${maxDeviation.toFixed(2)} mg (${percentDeviation.toFixed(2)}%)<br>
+                <span style="color: ${compliant ? 'var(--ok)' : 'var(--bad)'}; font-weight: 600;">
+                    ${compliant ? '✓ PASS - Within Specification' : '✗ FAIL - Out of Specification'}
+                </span><br>
+                <small>${criteria}</small>
+            `;
+            
+            document.getElementById('weightVariationResult').innerHTML = result;
+        }
+        
+        function calculateContentUniformity() {
+            const resultsText = document.getElementById('assayResults').value;
+            
+            if (!resultsText) {
+                showToast('Please enter assay results', 'warning');
+                return;
+            }
+            
+            const results = resultsText.split(',').map(r => parseFloat(r.trim()));
+            const n = results.length;
+            const mean = results.reduce((a, b) => a + b, 0) / n;
+            
+            // Calculate Acceptance Value (AV)
+            const k = 2.4; // For n=10
+            const s = Math.sqrt(results.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / (n - 1));
+            const av = k * s;
+            
+            const compliant = av <= 15.0;
+            const criteria = 'Stage 1: AV ≤ 15.0 (n=10)';
+            
+            const result = `
+                <strong>Content Uniformity Results</strong><br>
+                Mean: ${mean.toFixed(2)}%<br>
+                Standard Deviation: ${s.toFixed(3)}<br>
+                Acceptance Value (AV): ${av.toFixed(2)}<br>
+                <span style="color: ${compliant ? 'var(--ok)' : 'var(--bad)'}; font-weight: 600;">
+                    ${compliant ? '✓ PASS - AV within limits' : '✗ FAIL - AV exceeds limits'}
+                </span><br>
+                <small>${criteria}</small>
+            `;
+            
+            document.getElementById('contentUniformityResult').innerHTML = result;
+        }
+        
+        function calculateDisintegration() {
+            const timesText = document.getElementById('disintegrationTimes').value;
+            const limit = parseFloat(document.getElementById('disintegrationLimit').value);
+            
+            if (!timesText || isNaN(limit)) {
+                showToast('Please enter valid disintegration times', 'warning');
+                return;
+            }
+            
+            const times = timesText.split(',').map(t => parseFloat(t.trim()));
+            const maxTime = Math.max(...times);
+            const compliant = maxTime <= limit;
+            const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
+            
+            const result = `
+                <strong>Disintegration Test Results</strong><br>
+                Number of Tablets: ${times.length}<br>
+                Average Time: ${avgTime.toFixed(2)} minutes<br>
+                Maximum Time: ${maxTime.toFixed(2)} minutes<br>
+                Specification Limit: ${limit} minutes<br>
+                <span style="color: ${compliant ? 'var(--ok)' : 'var(--bad)'}; font-weight: 600;">
+                    ${compliant ? '✓ PASS - All tablets disintegrated within limit' : '✗ FAIL - Some tablets exceeded limit'}
+                </span>
+            `;
+            
+            document.getElementById('disintegrationResult').innerHTML = result;
+        }
+        
+        function calculateFriability() {
+            const initial = parseFloat(document.getElementById('initialFriabilityWeight').value);
+            const final = parseFloat(document.getElementById('finalFriabilityWeight').value);
+            
+            if (isNaN(initial) || isNaN(final)) {
+                showToast('Please enter valid weight values', 'warning');
+                return;
+            }
+            
+            const loss = initial - final;
+            const percentage = (loss / initial) * 100;
+            const compliant = percentage <= 1.0;
+            
+            const result = `
+                <strong>Friability Test Results</strong><br>
+                Initial Weight: ${initial.toFixed(3)} g<br>
+                Final Weight: ${final.toFixed(3)} g<br>
+                Weight Loss: ${loss.toFixed(3)} g<br>
+                Friability: ${percentage.toFixed(2)}%<br>
+                <span style="color: ${compliant ? 'var(--ok)' : 'var(--bad)'}; font-weight: 600;">
+                    ${compliant ? '✓ PASS - Friability ≤ 1.0%' : '✗ FAIL - Friability > 1.0%'}
+                </span><br>
+                <small>Limit: ≤1.0% (USP/BP/Ph.Eur.)</small>
+            `;
+            
+            document.getElementById('friabilityResult').innerHTML = result;
+        }
+        
+        // ===== ANALYSIS ENTRY FUNCTIONS =====
+        function saveAnalysis() {
+            const batch = document.getElementById('analysisBatch').value;
+            const material = document.getElementById('analysisMaterial').value;
+            const date = document.getElementById('analysisDate').value;
+            const analyst = document.getElementById('analystName').value;
+            
+            if (!batch || !material || !date || !analyst) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+            
+            const analysis = {
+                id: analyses.length + 1,
+                batch,
+                material,
+                date,
+                analyst,
+                weight: parseFloat(document.getElementById('analysisWeight').value) || 0,
+                hardness: parseFloat(document.getElementById('analysisHardness').value) || 0,
+                friability: parseFloat(document.getElementById('friabilityResultEntry').value) || 0,
+                assay: parseFloat(document.getElementById('assayResultEntry').value) || 0,
+                cu: parseFloat(document.getElementById('cuResultEntry').value) || 0,
+                disintegration: parseFloat(document.getElementById('disintegrationResultEntry').value) || 0,
+                status: 'saved',
+                timestamp: new Date().toISOString()
+            };
+            
+            analyses.push(analysis);
+            showToast('Analysis saved successfully', 'success');
+            updateDashboardStats();
+        }
+        
+        function clearAnalysisForm() {
+            if (confirm('Are you sure you want to clear the form?')) {
+                document.getElementById('analysisBatch').value = '';
+                document.getElementById('analysisMaterial').value = '';
+                document.getElementById('analysisDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('analystName').value = '';
+                document.getElementById('analysisWeight').value = '';
+                document.getElementById('analysisHardness').value = '';
+                document.getElementById('friabilityResultEntry').value = '';
+                document.getElementById('assayResultEntry').value = '';
+                document.getElementById('cuResultEntry').value = '';
+                document.getElementById('disintegrationResultEntry').value = '';
+            }
+        }
+        
+        function submitAnalysis() {
+            const batch = document.getElementById('analysisBatch').value;
+            if (!batch) {
+                showToast('Please enter a batch number', 'warning');
+                return;
+            }
+            
+            if (confirm('Submit analysis for review?')) {
+                showToast('Analysis submitted for review', 'success');
+            }
+        }
+        
+        // ===== COA GENERATOR FUNCTIONS =====
+        function updateCOAPreview() {
+            // Update COA preview with form values
+            document.getElementById('previewProductName').textContent = document.getElementById('coaProductName').value;
+            document.getElementById('previewBatchNumber').textContent = document.getElementById('coaBatchNumber').value;
+            document.getElementById('previewMfgDate').textContent = document.getElementById('coaMfgDate').value;
+            document.getElementById('previewExpDate').textContent = document.getElementById('coaExpDate').value;
+            document.getElementById('previewConclusionProduct').textContent = document.getElementById('coaProductName').value;
+            document.getElementById('previewConclusionBatch').textContent = document.getElementById('coaBatchNumber').value;
+            
+            showToast('COA preview updated', 'success');
+        }
+        
+        function printCOA() {
+            // Create a print-friendly version
+            const printContent = document.getElementById('coaPreview').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div class="coa-preview">
+                    ${printContent}
+                </div>
+                <div style="text-align: center; margin: 20px;">
+                    <button onclick="window.location.reload()" class="btn btn-primary">Return to System</button>
+                </div>
+            `;
+            
+            window.print();
+            
+            // Restore original content
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
+        }
+        
+        // ===== MICROBIOLOGY FUNCTIONS =====
+        function saveMicrobiologyTest() {
+            const sampleID = document.getElementById('microSampleID').value;
+            
+            if (!sampleID) {
+                showToast('Please enter a sample ID', 'warning');
+                return;
+            }
+            
+            showToast('Microbiology test saved successfully', 'success');
+        }
+        
+        function calculateMicroCompliance() {
+            const tamc = parseInt(document.getElementById('tamcValue').value) || 0;
+            const tymc = parseInt(document.getElementById('tymcValue').value) || 0;
+            const ecoli = document.getElementById('ecoliValue').value;
+            
+            let compliant = true;
+            let message = 'All tests compliant';
+            
+            // Check against typical limits
+            if (tamc > 1000) {
+                compliant = false;
+                message = 'TAMC exceeds limit (1000 cfu/g)';
+            } else if (tymc > 100) {
+                compliant = false;
+                message = 'TYMC exceeds limit (100 cfu/g)';
+            } else if (ecoli === 'present') {
+                compliant = false;
+                message = 'E. coli detected';
+            }
+            
+            const result = `
+                <strong>Microbiology Compliance Check</strong><br>
+                TAMC: ${tamc} cfu/g (Limit: ≤1000)<br>
+                TYMC: ${tymc} cfu/g (Limit: ≤100)<br>
+                E. coli: ${ecoli === 'absent' ? 'Absent' : 'Present'}<br>
+                <span style="color: ${compliant ? 'var(--ok)' : 'var(--bad)'}; font-weight: 600;">
+                    ${compliant ? '✓ COMPLIANT' : '✗ NON-COMPLIANT'}
+                </span><br>
+                <small>${message}</small>
+            `;
+            
+            showToast(message, compliant ? 'success' : 'warning');
+        }
+        
+        // ===== REPORTS FUNCTIONS =====
+        function generateReport(type) {
+            showToast(`Generating ${type} report...`, 'info');
+            
+            // Simulate report generation
+            setTimeout(() => {
+                showToast(`${type} report generated successfully`, 'success');
+            }, 1500);
+        }
+        
+        function generateCustomReport() {
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            
+            showToast(`Generating ${reportType} report for ${startDate} to ${endDate}...`, 'info');
+            
+            setTimeout(() => {
+                showToast('Report generated successfully', 'success');
+            }, 2000);
+        }
+        
+        function previewReport() {
+            showToast('Opening report preview...', 'info');
+        }
+        
+        // ===== BACKUP FUNCTIONS =====
+        function backupDatabase() {
+            showToast('Starting database backup...', 'info');
+            
+            // Simulate backup
+            setTimeout(() => {
+                const backupData = {
+                    users: users,
+                    materials: materials,
+                    analyses: analyses,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Save to localStorage (in a real app, this would go to server)
+                localStorage.setItem('pqcms_backup_' + new Date().toISOString(), JSON.stringify(backupData));
+                
+                showToast('Database backup completed successfully', 'success');
+            }, 2000);
+        }
+        
+        function exportAllData() {
+            const exportData = {
+                users: users,
+                materials: materials,
+                analyses: analyses,
+                exportDate: new Date().toISOString(),
+                systemVersion: 'PQCMS V01.0'
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `pqcms-export-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showToast('All data exported successfully', 'success');
+        }
+        
+        function restoreBackup() {
+            if (confirm('Restore from backup? This will overwrite current data.')) {
+                showToast('Initiating system restore...', 'warning');
+                
+                // In a real app, you would load from backup
+                setTimeout(() => {
+                    showToast('System restore completed', 'success');
+                    // Reload the page
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }, 3000);
+            }
+        }
+        
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + S: Save
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                switch(currentTab) {
+                    case 'analysis-entry':
+                        saveAnalysis();
+                        break;
+                    case 'user-management':
+                        if (editingUserId) saveUser();
+                        break;
+                    case 'material-management':
+                        if (editingMaterialId) saveMaterial();
+                        break;
+                    default:
+                        showToast('No save action available for current tab', 'info');
+                }
+            }
+            
+            // Ctrl + P: Print
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                if (currentTab === 'coa-generator') {
+                    printCOA();
+                } else {
+                    showToast('Print not available for current tab', 'info');
+                }
+            }
+            
+            // Ctrl + D: Dashboard
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                showTab('dashboard');
+            }
+            
+            // Esc: Close modals
+            if (e.key === 'Escape') {
+                closeUserModal();
+                closeMaterialModal();
+            }
+        });
+        
+        // ===== MOBILE SUPPORT =====
+        function checkMobile() {
+            return window.innerWidth <= 768;
+        }
+        
+        // Initialize mobile view
+        if (checkMobile()) {
+            document.body.classList.add('mobile-view');
+        }
+        
+        window.addEventListener('resize', function() {
+            if (checkMobile()) {
+                document.body.classList.add('mobile-view');
+            } else {
+                document.body.classList.remove('mobile-view');
+            }
+        });
+    </script>
+</body>
+</html>
